@@ -1,5 +1,4 @@
 '''
-The WebPype Class file. WebPype follows the spec of WebPipes ( webpipes.org )
 
 '''
 import json
