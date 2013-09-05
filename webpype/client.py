@@ -8,7 +8,7 @@ try:
 except ImportError:
     from urllib2 import urlopen, Request
 
-class WebPype(object):
+class WebPypeClient(object):
 
     def options(self, url):
         request = Request(url)
