@@ -3,18 +3,21 @@ The WebPype Class file. WebPype follows the spec of WebPipes ( webpipes.org )
 
 '''
 import json
-import urllib2
+try:
+    from urllib.request import urlopen, Request
+except ImportError:
+    from urllib2 import urlopen, Request
 
 class WebPype(object):
 
     def options(self, url):
-        request = urllib2.Request(url)
+        request = Request(url)
         request.get_method = lambda: 'OPTIONS'
-        resp = urllib2.urlopen(request)
+        resp = urlopen(request)
         return resp.read()
 
     def execute(self, url, inputs):
         data = json.dumps({'inputs': [inputs]})
-        request = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-        resp = urllib2.urlopen(request)
+        request = Request(url, data, {'Content-Type': 'application/json'})
+        resp = urlopen(request)
         return resp.read()
