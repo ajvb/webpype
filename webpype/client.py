@@ -1,5 +1,5 @@
 '''
-
+This file contains the functionality for the using of webpipes.
 '''
 import json
 try:
