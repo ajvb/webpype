@@ -26,10 +26,17 @@ class WebPypeBaseClient(object):
         resp = urlopen(request)
         return resp.read()
 
-    def _wrapinput(self, inputs, array_wrap=False):
+    def _validate_input(self, inputs):
+        if isinstance(inputs, unicode):
+            inputs = str(inputs)
         if not isinstance(inputs, dict) and not isinstance(inputs, str):
             raise TypeError('''Your input value must be a dictionary or
                                string. Got: %s''' % inputs)
+        return inputs
+
+    def _wrapinput(self, inputs, array_wrap=False):
+        inputs = self._validateinput(inputs)
+
         if array_wrap:
             if isinstance(inputs, dict):
                 data = json.dumps({'inputs': inputs})
