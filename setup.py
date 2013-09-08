@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.2'
+from webpype import VERSION as V
+
+version = '%s.%s.%s' % (V[0], V[1], V[2])
 
 setup(name='webpype',
       version=version,
