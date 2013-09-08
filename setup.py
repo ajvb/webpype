@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1'
+version = '0.1.2'
 
 setup(name='webpype',
       version=version,
@@ -22,4 +22,4 @@ setup(name='webpype',
       entry_points="""
       # -*- Entry points: -*-
       """,
-      )
+)
