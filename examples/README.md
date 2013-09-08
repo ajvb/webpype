@@ -1,6 +1,6 @@
 ##### Examples
 
-    ajvb:$ python print_options.py > README.md
+    ajvb:$ python print_options.py
 
     {
       "name": "HTTP Status Code Retriever",
