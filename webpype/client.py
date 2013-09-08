@@ -5,8 +5,9 @@ from __future__ import print_function
 import json
 try:
     from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
 except ImportError:
-    from urllib2 import urlopen, Request
+    from urllib2 import urlopen, Request, HTTPError
 
 from exceptions import TypeError
 
@@ -25,19 +26,39 @@ class WebPypeBaseClient(object):
         resp = urlopen(request)
         return resp.read()
 
+    def _wrapinput(self, inputs, array_wrap=False):
+        if not isinstance(inputs, dict) and not isinstance(inputs, str):
+            raise TypeError('''Your input value must be a dictionary or
+                               string. Got: %s''' % inputs)
+        if array_wrap:
+            if isinstance(inputs, dict):
+                data = json.dumps({'inputs': inputs})
+            if isinstance(inputs, str):
+                data = "{'inputs' : %s}" % inputs
+        else:
+            if isinstance(inputs, dict):
+                data = json.dumps({'inputs': [inputs]})
+            if isinstance(inputs, str):
+                data = "{'inputs' : [%s]}" % inputs
+
+        return data
+
     def options(self, url):
         return self._request(url, method='OPTIONS')
 
     def execute(self, url, inputs):
-        if not isinstance(inputs, dict) and not isinstance(inputs, str):
-            raise TypeError('Your input value must be a dictionary or string. Got: %s' % inputs)
-        if isinstance(inputs, dict):
-            data = json.dumps({'inputs': [inputs]})
-        if isinstance(inputs, str):
-            data = "{'inputs' : [%s]}" % inputs
-
+        data = self._wrapinput(inputs)
         request = Request(url, data, headers={'Content-Type': 'application/json'})
-        resp = urlopen(request)
+        try:
+            resp = urlopen(request)
+        except HTTPError:
+            try:
+                data = self._wrapinput(inputs, array_wrap=True)
+                request = Request(url, data, headers={'Content-Type': 'application/json'})
+                resp = urlopen(request)
+            except HTTPError:
+                raise HTTPError("Incorrect URL or structuring of data.")
+
         return resp.read()
 
 
@@ -67,7 +88,7 @@ class WebPypeClient(WebPypeBaseClient):
         else:
             raise TypeError("This function only accepts a 'file' type  or file path")
 
-        inputs = f.read()
+        inputs = json.loads(f.read())
         resp = self.execute(url, inputs)
         return resp
 
